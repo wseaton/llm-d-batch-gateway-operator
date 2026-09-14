@@ -23,7 +23,7 @@ opendatahub-operator (platform orchestrator)
 - OpenShift cluster with ODH operator installed
 - `oc` / `kubectl` CLI connected to the cluster
 - `helm` (for installing test prerequisites: PostgreSQL, Redis, MinIO)
-- External dependencies for LLMBatchGateway: PostgreSQL, Redis, S3-compatible storage
+- External dependencies for LLMBatchGateway: PostgreSQL, S3-compatible storage, and Redis only when `dispatchMode: async`
 
 ## Installation
 
@@ -99,7 +99,7 @@ status:
 
 ### Step 2: Set up external dependencies
 
-LLMBatchGateway requires PostgreSQL, Redis, and S3-compatible storage. For testing, use the provided script:
+LLMBatchGateway requires PostgreSQL and S3-compatible storage. Redis is needed only for `dispatchMode: async`, where llm-d-async uses it for request and result queues. For testing, use the provided script:
 
 ```bash
 export NAMESPACE=batch-api
@@ -112,7 +112,7 @@ This creates the `$NAMESPACE` namespace and installs:
 - MinIO (`minio.$NAMESPACE.svc.cluster.local:9000`, bucket: `batch-gateway`)
 - `batch-gateway-secrets` Secret
 
-For production, replace with your own PostgreSQL, Redis, and S3 endpoints and update the CR spec accordingly.
+For production, replace with your own PostgreSQL and S3 endpoints (and Redis for async dispatch) and update the Secret accordingly. Redis TLS is configured through the `redis-url` value itself (`rediss://`).
 
 ### Step 3: Create LLMBatchGateway CR
 
