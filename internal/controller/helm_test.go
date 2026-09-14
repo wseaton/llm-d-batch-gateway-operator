@@ -530,7 +530,6 @@ func TestSpecToHelmValues_OTEL(t *testing.T) {
 		Insecure:          true,
 		Sampler:           "parentbased_traceidratio",
 		SamplerArg:        "0.1",
-		RedisTracing:      true,
 		PostgresqlTracing: true,
 	}
 
@@ -548,8 +547,8 @@ func TestSpecToHelmValues_OTEL(t *testing.T) {
 	if got := otel["sampler"]; got != "parentbased_traceidratio" {
 		t.Errorf("otel.sampler = %v", got)
 	}
-	if got := otel["redisTracing"]; got != true {
-		t.Errorf("otel.redisTracing = %v, want true", got)
+	if got := otel["postgresqlTracing"]; got != true {
+		t.Errorf("otel.postgresqlTracing = %v, want true", got)
 	}
 }
 
@@ -1058,26 +1057,6 @@ func TestSpecToHelmValues_InferenceGatewayMaxRetries(t *testing.T) {
 	gig := config["globalInferenceGateway"].(map[string]interface{})
 	if got := gig["maxRetries"]; got != int64(3) {
 		t.Errorf("maxRetries = %v, want 3", got)
-	}
-}
-
-func TestSpecToHelmValues_RedisTLS(t *testing.T) {
-	gw := minimalGateway()
-	gw.Spec.Redis = &batchv1alpha1.RedisClientSpec{
-		EnableTLS: true,
-		Insecure:  true,
-	}
-
-	vals := specToBatchHelmValues(gw, testSecretName(gw), testImages(), tlspkg.ProfileValues{})
-
-	global := vals["global"].(map[string]interface{})
-	dbClient := global["dbClient"].(map[string]interface{})
-	redis := dbClient["redis"].(map[string]interface{})
-	if got := redis["enableTLS"]; got != true {
-		t.Errorf("dbClient.redis.enableTLS = %v, want true", got)
-	}
-	if got := redis["insecure"]; got != true {
-		t.Errorf("dbClient.redis.insecure = %v, want true", got)
 	}
 }
 

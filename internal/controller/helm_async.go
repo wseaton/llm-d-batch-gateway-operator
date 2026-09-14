@@ -145,7 +145,6 @@ func specToAsyncHelmValues(gw *batchv1alpha1.LLMBatchGateway, secretName string,
 		otelVals["insecure"] = gw.Spec.OTEL.Insecure
 		setIfNotEmpty(otelVals, "sampler", gw.Spec.OTEL.Sampler)
 		setIfNotEmpty(otelVals, "samplerArg", gw.Spec.OTEL.SamplerArg)
-		otelVals["redisTracing"] = gw.Spec.OTEL.RedisTracing
 		ap["otel"] = otelVals
 	}
 

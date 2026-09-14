@@ -239,9 +239,7 @@ spec:
                 description: DBBackend selects the database backend used for job state
                   storage.
                 enum:
-                - redis
                 - postgresql
-                - valkey
                 type: string
               fileStorage:
                 description: |-
@@ -561,9 +559,6 @@ spec:
                     type: boolean
                   postgresqlTracing:
                     description: PostgresqlTracing enables tracing of PostgreSQL operations.
-                    type: boolean
-                  redisTracing:
-                    description: RedisTracing enables tracing of Redis operations.
                     type: boolean
                   sampler:
                     description: Sampler is the OTEL sampler type (e.g. "parentbased_traceidratio").
@@ -1342,18 +1337,6 @@ spec:
                       Labels are additional labels applied to the PrometheusRule resource,
                       used to match Prometheus operator rule selectors.
                     type: object
-                type: object
-              redis:
-                description: RedisClient configures Redis/Valkey client connection
-                  settings (TLS, etc.).
-                properties:
-                  enableTLS:
-                    description: EnableTLS enables TLS for the Redis/Valkey connection.
-                    type: boolean
-                  insecure:
-                    description: Insecure skips TLS certificate verification. Only
-                      effective when enableTLS is true.
-                    type: boolean
                 type: object
               secretRef:
                 description: |-

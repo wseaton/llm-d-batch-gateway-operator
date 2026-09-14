@@ -673,8 +673,8 @@ func TestReconcile(t *testing.T) {
 		assertResourceValue(t, "apiserver limits.memory", res.Limits, corev1.ResourceMemory, "512Mi")
 	})
 
-	t.Run("dbBackend change updates all ConfigMaps and workloads", func(t *testing.T) {
-		gw := newTestGateway("test-dbbackend")
+	t.Run("global file storage change updates all ConfigMaps and workloads", func(t *testing.T) {
+		gw := newTestGateway("test-filestorage")
 		if err := k8sClient.Create(ctx, gw); err != nil {
 			t.Fatalf("creating CR: %v", err)
 		}
@@ -698,7 +698,7 @@ func TestReconcile(t *testing.T) {
 		if err := k8sClient.Get(ctx, nn, gw); err != nil {
 			t.Fatalf("getting CR for update: %v", err)
 		}
-		gw.Spec.DBBackend = "redis"
+		gw.Spec.FileStorage.S3.Bucket = "rotated-bucket"
 		if err := k8sClient.Update(ctx, gw); err != nil {
 			t.Fatalf("updating CR: %v", err)
 		}
@@ -710,11 +710,11 @@ func TestReconcile(t *testing.T) {
 
 		for _, component := range []string{"apiserver", "processor", "gc"} {
 			cm := getOwnedConfigMap(ctx, t, gw, component)
-			assertConfigMapContains(t, cm, `type: "redis"`)
+			assertConfigMapContains(t, cm, `bucket: "rotated-bucket"`)
 
 			after := workloadConfigChecksum(ctx, t, gw, component)
 			if after == checksumsBefore[component] {
-				t.Errorf("%s pod template not updated after dbBackend change", component)
+				t.Errorf("%s pod template not updated after file storage change", component)
 			}
 		}
 	})

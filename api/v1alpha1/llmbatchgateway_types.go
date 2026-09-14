@@ -59,12 +59,9 @@ type LLMBatchGatewaySpec struct {
 	SecretRef corev1.SecretReference `json:"secretRef"`
 
 	// DBBackend selects the database backend used for job state storage.
-	// +kubebuilder:validation:Enum=redis;postgresql;valkey
+	// +kubebuilder:validation:Enum=postgresql
 	// +kubebuilder:default=postgresql
 	DBBackend string `json:"dbBackend,omitempty"`
-
-	// RedisClient configures Redis/Valkey client connection settings (TLS, etc.).
-	Redis *RedisClientSpec `json:"redis,omitempty"`
 
 	// FileStorage configures the file storage backend used to persist batch
 	// input/output files. Exactly one of s3 or fs must be configured.
@@ -105,17 +102,6 @@ type LLMBatchGatewaySpec struct {
 	// from private registries. Applied globally to all component pods (apiServer, processor, gc).
 	// +kubebuilder:validation:MaxItems=20
 	ImagePullSecrets []corev1.LocalObjectReference `json:"imagePullSecrets,omitempty"`
-}
-
-// --- Redis Client ---
-
-// RedisClientSpec configures Redis/Valkey client connection settings.
-type RedisClientSpec struct {
-	// EnableTLS enables TLS for the Redis/Valkey connection.
-	EnableTLS bool `json:"enableTLS,omitempty"`
-
-	// Insecure skips TLS certificate verification. Only effective when enableTLS is true.
-	Insecure bool `json:"insecure,omitempty"`
 }
 
 // --- File Storage ---
@@ -573,9 +559,6 @@ type OTELSpec struct {
 	// SamplerArg is the argument passed to the sampler (e.g. "0.1" for 10% sampling).
 	// +kubebuilder:validation:MaxLength=253
 	SamplerArg string `json:"samplerArg,omitempty"`
-
-	// RedisTracing enables tracing of Redis operations.
-	RedisTracing bool `json:"redisTracing,omitempty"`
 
 	// PostgresqlTracing enables tracing of PostgreSQL operations.
 	PostgresqlTracing bool `json:"postgresqlTracing,omitempty"`

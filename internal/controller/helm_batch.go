@@ -19,12 +19,6 @@ func specToBatchHelmValues(gw *batchv1alpha1.LLMBatchGateway, secretName string,
 	dbClient := map[string]any{
 		"type": gw.Spec.DBBackend,
 	}
-	if gw.Spec.Redis != nil {
-		dbClient["redis"] = map[string]any{
-			"enableTLS": gw.Spec.Redis.EnableTLS,
-			"insecure":  gw.Spec.Redis.Insecure,
-		}
-	}
 	global := map[string]any{
 		"secretName": secretName,
 		"dbClient":   dbClient,
@@ -79,7 +73,6 @@ func specToBatchHelmValues(gw *batchv1alpha1.LLMBatchGateway, secretName string,
 		otelVals["insecure"] = otel.Insecure
 		setIfNotEmpty(otelVals, "sampler", otel.Sampler)
 		setIfNotEmpty(otelVals, "samplerArg", otel.SamplerArg)
-		otelVals["redisTracing"] = otel.RedisTracing
 		otelVals["postgresqlTracing"] = otel.PostgresqlTracing
 		global["otel"] = otelVals
 	}

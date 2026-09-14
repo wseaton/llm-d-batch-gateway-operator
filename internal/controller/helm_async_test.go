@@ -195,11 +195,10 @@ func TestSpecToAsyncHelmValues_ModelServerMonitor(t *testing.T) {
 func TestSpecToAsyncHelmValues_OTEL(t *testing.T) {
 	gw := minimalAsyncGateway()
 	gw.Spec.OTEL = &batchv1alpha1.OTELSpec{
-		Endpoint:     "http://jaeger:4317",
-		Insecure:     true,
-		Sampler:      "parentbased_traceidratio",
-		SamplerArg:   "0.1",
-		RedisTracing: false,
+		Endpoint:   "http://jaeger:4317",
+		Insecure:   true,
+		Sampler:    "parentbased_traceidratio",
+		SamplerArg: "0.1",
 	}
 	vals := specToAsyncHelmValues(gw, testSecretName(gw), testImages())
 	ap := vals["ap"].(map[string]any)
@@ -212,9 +211,6 @@ func TestSpecToAsyncHelmValues_OTEL(t *testing.T) {
 	}
 	if got := otel["insecure"]; got != true {
 		t.Errorf("otel.insecure = %v, want true", got)
-	}
-	if got := otel["redisTracing"]; got != false {
-		t.Errorf("otel.redisTracing = %v, want false", got)
 	}
 }
 
